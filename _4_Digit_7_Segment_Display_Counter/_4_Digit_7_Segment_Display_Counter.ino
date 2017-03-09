@@ -13,12 +13,18 @@ const int D3 = 30;
 const int D2 = 31;
 const int D1 = 32;
 
-int displayNumberD1 = 9;
-int displayNumberD2 = 9;
-int displayNumberD3 = 9;
-int displayNumberD4 = 9;
+// Storing what number that is displayed on each digit
+int displayNumberD1 = 0;
+int displayNumberD2 = 0;
+int displayNumberD3 = 0;
+int displayNumberD4 = 0;
+
+// Timer variables
+unsigned long startTime = 0;
+unsigned long loopTime;
 
 void setup() {
+  // Setting up segments
   pinMode(A, OUTPUT);
   pinMode(B, OUTPUT);
   pinMode(C, OUTPUT);
@@ -27,6 +33,7 @@ void setup() {
   pinMode(F, OUTPUT);
   pinMode(G, OUTPUT);
 
+  // Setting up digits
   pinMode(D1, OUTPUT);
   digitalWrite(D1, 1);
   pinMode(D2, OUTPUT);
@@ -35,134 +42,157 @@ void setup() {
   digitalWrite(D3, 1);
   pinMode(D4, OUTPUT);
   digitalWrite(D4, 1);
-  
 }
 
-void loop() {  
-  updateAll();
-  delay(200);
+void loop() { 
+    loopTime = millis() - startTime;
+    if (loopTime <= 200) {
+      displayDigits();
+    }else {
+      updateDigits();
+      startTime = millis();
+    } 
 }
 
-void updateAll() {  
-  if (displayNumberD4 == 9) {
-    updateD4();
-    displayNumberD4 = 0;
-    updateD3();
+void displayDigits() {
+  display(D4);
+  delay(4);
+  display(D3);
+  delay(4);
+  display(D2);
+  delay(4);
+  display(D1);
+  delay(4);
+}
+
+void updateDigits() {  
+  if (displayNumberD4 == 9) {           
     if (displayNumberD3 == 9) {
       displayNumberD3 = 0;
+      if (displayNumberD2 == 9) {
+        displayNumberD2 = 0;
+        if (displayNumberD1 == 9) {
+          setAllToZero();
+        } else {
+          displayNumberD1++;
+        }
+      } else {
+        displayNumberD2++;
+      }
     } else {
       displayNumberD3++;
     }
-  } else if (displayNumberD3 == 9) {
-    updateD3();
-    displayNumberD3 = 0;
-    updateD2();
-    if (displayNumberD2 == 9) {
-      displayNumberD2 = 0;
-    } else {
-      displayNumberD2++;
-    }  
-  } else if (displayNumberD2 == 9) {
-    updateD2();
-    displayNumberD2 = 0;
-    updateD1();
-    if (displayNumberD1 == 9) {
-      displayNumberD1 = 0;
-    } else {
-      displayNumberD1++;
-    }
-  } else if (displayNumberD1 == 9) {
-    setAllToZero();    
-  } else if (displayNumberD4 != 9) {
-    updateD4();
+    displayNumberD4 = 0;
+  } else {
     displayNumberD4++;
   }
 }
 
 void setAllToZero() {
-  displayNumberD4 = 9;
-  displayNumberD3 = 9;
-  displayNumberD2 = 9;
-  displayNumberD1 = 9;
+  displayNumberD4 = 0;
+  displayNumberD3 = 0;
+  displayNumberD2 = 0;
+  displayNumberD1 = 0;
 }
 
-void updateD4() {  
-  digitalWrite(D4, 0);
-  digitalWrite(D3, 1);
-  digitalWrite(D2, 1);
-  digitalWrite(D1, 1);  
- 
-  if (displayNumberD4 == 0) {
+void display(int toBeDisplayed) {
+  // Enables the digit to be updated and sets displayNumber = the displayNumber of the one to be updated
+  int displayNumber;
+  if (toBeDisplayed == D4) {
+    displayNumber = displayNumberD4;
+    digitalWrite(D4, 0);
+    digitalWrite(D3, 1);
+    digitalWrite(D2, 1);
+    digitalWrite(D1, 1);
+  } else if (toBeDisplayed == D3) {
+    displayNumber = displayNumberD3;
+    digitalWrite(D4, 1);
+    digitalWrite(D3, 0);
+    digitalWrite(D2, 1);
+    digitalWrite(D1, 1);
+  } else if (toBeDisplayed == D2) {
+    displayNumber = displayNumberD2;
+    digitalWrite(D4, 1);
+    digitalWrite(D3, 1);
+    digitalWrite(D2, 0);
+    digitalWrite(D1, 1);
+  } else if (toBeDisplayed == D1) {
+    displayNumber = displayNumberD1;
+    digitalWrite(D4, 1);
+    digitalWrite(D3, 1);
+    digitalWrite(D2, 1);
+    digitalWrite(D1, 0);
+  }
+
+  // Updates segments of the selected digit
+  if (displayNumber == 0) {
+    for (int i = 22; i <= 28; i++) {
+      digitalWrite(i, 1);
+    }
+    digitalWrite(G, 0);     
+  } else if (displayNumber == 1) {
     for (int i = 22; i <= 28; i++) {
       digitalWrite(i, 0);
     }    
+    digitalWrite(B, 1);
+    digitalWrite(C, 1);        
+  } else if (displayNumber == 2) {
+    for (int i = 22; i <= 28; i++) {
+      digitalWrite(i, 0);
+    }  
+    digitalWrite(A, 1);
+    digitalWrite(B, 1);
+    digitalWrite(G, 1);
+    digitalWrite(E, 1);
+    digitalWrite(D, 1);    
+  } else if (displayNumber == 3) {
+    for (int i = 22; i <= 28; i++) {
+      digitalWrite(i, 0);
+    }
+    digitalWrite(A, 1);
+    digitalWrite(B, 1);
+    digitalWrite(G, 1);
+    digitalWrite(C, 1);
+    digitalWrite(D, 1);    
+  } else if (displayNumber == 4) {
+    for (int i = 22; i <= 28; i++) {
+      digitalWrite(i, 0);
+    }
+    digitalWrite(F, 1);
+    digitalWrite(G, 1);
+    digitalWrite(B, 1);
+    digitalWrite(C, 1);       
+  } else if (displayNumber == 5) {
+    for (int i = 22; i <= 28; i++) {
+      digitalWrite(i, 0);
+    }  
+    digitalWrite(A, 1);
+    digitalWrite(F, 1);
+    digitalWrite(G, 1);
+    digitalWrite(C, 1);
+    digitalWrite(D, 1);     
+  } else if (displayNumber == 6) {
+    for (int i = 22; i <= 28; i++) {
+      digitalWrite(i, 0);
+    }  
+    digitalWrite(A, 1);
+    digitalWrite(F, 1);
+    digitalWrite(G, 1);
+    digitalWrite(E, 1);
+    digitalWrite(D, 1);
+    digitalWrite(C, 1);    
+  } else if (displayNumber == 7) {
+    for (int i = 22; i <= 28; i++) {
+      digitalWrite(i, 0);
+    }  
+    digitalWrite(A, 1);
     digitalWrite(B, 1);
     digitalWrite(C, 1);    
-    
-  } else if (displayNumberD4 == 1) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD4 == 2) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD4 == 3) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);   
-    
-  } else if (displayNumberD4 == 4) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1); 
-    
-  } else if (displayNumberD4 == 5) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD4 == 6) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD4 == 7) {
+  } else if (displayNumber == 8) {
     for (int i = 22; i <= 28; i++) {
       digitalWrite(i, 1);
-    }      
-    
-  } else if (displayNumberD4 == 8) {
+    }        
+  } else if (displayNumber == 9) {
     for (int i = 22; i <= 28; i++) {
       digitalWrite(i, 0);
     } 
@@ -170,295 +200,6 @@ void updateD4() {
     digitalWrite(B, 1);
     digitalWrite(C, 1);
     digitalWrite(F, 1);
-    digitalWrite(G, 1);
-     
-  } else if (displayNumberD4 == 9) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 1);
-    }
-    digitalWrite(G, 0);     
+    digitalWrite(G, 1);     
   }
-  
-}
-
-void updateD3() {  
-  digitalWrite(D4, 1);
-  digitalWrite(D3, 0);
-  digitalWrite(D2, 1);
-  digitalWrite(D1, 1);  
- 
-  if (displayNumberD3 == 0) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }    
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD3 == 1) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD3 == 2) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1);  
-    
-  } else if (displayNumberD3 == 3) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD3 == 4) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD3 == 5) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD3 == 6) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD3 == 7) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 1);
-    }      
-    
-  } else if (displayNumberD3 == 8) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    } 
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-     
-  } else if (displayNumberD3 == 9) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 1);
-    }
-    digitalWrite(G, 0);     
-  }    
-}
-
-void updateD2() {  
-  digitalWrite(D4, 1);
-  digitalWrite(D3, 1);
-  digitalWrite(D2, 0);
-  digitalWrite(D1, 1);  
- 
-  if (displayNumberD2 == 0) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }    
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD2 == 1) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD2 == 2) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1);  
-    
-  } else if (displayNumberD2 == 3) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD2 == 4) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD2 == 5) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD2 == 6) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD2 == 7) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 1);
-    }      
-    
-  } else if (displayNumberD2 == 8) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    } 
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-     
-  } else if (displayNumberD2 == 9) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 1);
-    }
-    digitalWrite(G, 0);     
-  }    
-}
-
-void updateD1() {  
-  digitalWrite(D4, 1);
-  digitalWrite(D3, 1);
-  digitalWrite(D2, 1);
-  digitalWrite(D1, 0);  
- 
-  if (displayNumberD1 == 0) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }    
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD1 == 1) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD1 == 2) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1);  
-    
-  } else if (displayNumberD1 == 3) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD1 == 4) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(C, 1);
-    digitalWrite(D, 1);
-    
-  } else if (displayNumberD1 == 5) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-    digitalWrite(E, 1);
-    digitalWrite(D, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD1 == 6) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    }  
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    
-  } else if (displayNumberD1 == 7) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 1);
-    }      
-    
-  } else if (displayNumberD1 == 8) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 0);
-    } 
-    digitalWrite(A, 1);
-    digitalWrite(B, 1);
-    digitalWrite(C, 1);
-    digitalWrite(F, 1);
-    digitalWrite(G, 1);
-     
-  } else if (displayNumberD1 == 9) {
-    for (int i = 22; i <= 28; i++) {
-      digitalWrite(i, 1);
-    }
-    digitalWrite(G, 0);     
-  }    
 }
