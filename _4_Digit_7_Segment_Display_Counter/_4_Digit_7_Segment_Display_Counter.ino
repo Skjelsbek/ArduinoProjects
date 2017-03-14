@@ -56,13 +56,13 @@ void loop() {
 
 void displayDigits() {
   display(D4);
-  delay(4);
+  delay(1);
   display(D3);
-  delay(4);
+  delay(1);
   display(D2);
-  delay(4);
+  delay(1);
   display(D1);
-  delay(4);
+  delay(1);
 }
 
 void updateDigits() {  
