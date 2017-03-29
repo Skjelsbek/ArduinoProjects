@@ -14,24 +14,13 @@
 
 #include <SPI.h>
 #include <MFRC522.h>
-#include <LCD.h>
 #include <LiquidCrystal_I2C.h>
-#include <Wire.h>
 
 #define RST_PIN         5          // Configurable, see typical pin layout above
 #define SS_PIN          53           // Configurable, see typical pin layout above
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 
-#define I2C_ADDR 0x27
-#define Rs_pin 0
-#define Rw_pin 1
-#define En_pin 2
-#define BACKLIGHT_PIN 3
-#define D4_pin 4
-#define D5_pin 5
-#define D6_pin 6
-#define D7_pin 7
-LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
 	Serial.begin(9600);		// Initialize serial communications with the PC
@@ -39,8 +28,7 @@ void setup() {
 	mfrc522.PCD_Init();		// Init MFRC522
 	Serial.println("Scan card to see UID!");
 
-  lcd.begin(16,2);
-  lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);
+  lcd.init();
   lcd.setBacklight(HIGH);
   lcd.home();
   lcd.print("Scan card to");

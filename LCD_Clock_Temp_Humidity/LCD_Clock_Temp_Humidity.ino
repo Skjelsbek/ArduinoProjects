@@ -1,21 +1,8 @@
-// Including LCD libraries
-#include <LCD.h>
+// Including LCD library
 #include <LiquidCrystal_I2C.h>
-#include <Wire.h>
-
-// Defining LCD
-#define I2C_ADDR 0x27
-#define Rs_pin 0
-#define Rw_pin 1
-#define En_pin 2
-#define BACKLIGHT_PIN 3
-#define D4_pin 4
-#define D5_pin 5
-#define D6_pin 6
-#define D7_pin 7
 
 // Instantiate LiquidCrystal_I2C
-LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // Including Time and DS1302RTC libraries
 #include <Time.h>
@@ -51,8 +38,7 @@ void setup() {
   Serial.begin(9600); // Init Serial
 
   // Init LCD
-  lcd.begin(16,2);
-  lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);
+  lcd.init();
   lcd.setBacklight(HIGH);
 
   setSyncProvider(RTC.get); // Get time from RTC
