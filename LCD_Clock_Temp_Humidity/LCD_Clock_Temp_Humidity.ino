@@ -28,6 +28,46 @@ dht DHT;
 #define vry A1
 #define sw 2
 
+byte menu_RIGHT[8] = {
+   B10000,
+   B11000,
+   B11100,
+   B11110,
+   B11100,
+   B11000,
+   B10000,
+   B00000};
+
+byte menu_LEFT[8] = {
+   B00001,
+   B00011,
+   B00111,
+   B01111,
+   B00111,
+   B00011,
+   B00001,
+   B00000};
+
+byte thermometer_symbol[8] = {
+   B00100,
+   B01010,
+   B01010,
+   B01110,
+   B01110,
+   B11111,
+   B11111,
+   B01110};
+
+byte bell_symbol[8] = {
+   B00100,
+   B01110,
+   B01110,
+   B01110,
+   B01110,
+   B11111,
+   B00000,
+   B00100};
+   
 void setup() {
   // Activate RTC module
   digitalWrite(DS1302_GND_PIN, LOW);
@@ -48,6 +88,11 @@ void setup() {
   pinMode(vrx, INPUT);
   pinMode(vry, INPUT);
   pinMode(sw, INPUT_PULLUP);
+
+  lcd.createChar(0, thermometer_symbol);
+  lcd.createChar(1, bell_symbol);
+  lcd.createChar(5, menu_RIGHT);
+  lcd.createChar(6, menu_LEFT);
 }
 
 void loop() {  
