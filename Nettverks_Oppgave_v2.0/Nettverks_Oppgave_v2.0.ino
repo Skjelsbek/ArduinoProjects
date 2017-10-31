@@ -95,10 +95,11 @@ void loop() {
     if (client.available() > 0) {
       // read the bytes incoming from the client to the buffer
       myBuffer[index++] = client.read();
-      Serial.println(myBuffer[index - 1]); 
+      Serial.print(myBuffer[index - 1]); 
     }
         
     if (index > 0 && myBuffer[index - 1] == '\0') {
+      Serial.println();
       if (compArray(readTemp.c_str(), readTemp.length(), myBuffer) == true) {
         // Sends temperature to client
         DHT.read11(sensor);
