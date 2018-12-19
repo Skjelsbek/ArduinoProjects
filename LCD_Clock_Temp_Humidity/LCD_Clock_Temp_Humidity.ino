@@ -5,13 +5,12 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // Including Time and DS1302RTC libraries
-#include <Time.h>
 #include <TimeLib.h>
 #include <DS1302RTC.h>
 
 // Instantiate DS1302RTC
 // Set pins:  CE, IO, CLK
-DS1302RTC RTC(27, 29, 31);
+DS1302RTC rtc(2, 3, 4);
 
 // Optional connection for RTC module
 // Using digital pins 33 and 35 as GND and VCC
@@ -19,9 +18,9 @@ DS1302RTC RTC(27, 29, 31);
 #define DS1302_VCC_PIN 35
 
 // Including and defining and instantiate DHT11(Temperature and Humidity sensor)
-#include "dht.h"
+#include <DHT.h>
 const int dhtPin = A0;
-dht DHT;
+DHT dht(dhtPin, DHT11);
 
 // Defining Joystick
 #define vrx A2
@@ -69,21 +68,24 @@ byte bell_symbol[8] = {
    B00100};
    
 void setup() {
+  Serial.begin(9600); // Init Serial
+  
   // Activate RTC module
   digitalWrite(DS1302_GND_PIN, LOW);
   pinMode(DS1302_GND_PIN, OUTPUT);
   digitalWrite(DS1302_VCC_PIN, HIGH);
   pinMode(DS1302_VCC_PIN, OUTPUT);
 
-  Serial.begin(9600); // Init Serial
-
   // Init LCD
-  lcd.init();
+  lcd.begin();
   lcd.setBacklight(HIGH);
 
-  setSyncProvider(RTC.get); // Get time from RTC
-  //setTime(22, 5, 5, 26, 3, 2017);
-  //RTC.set(now());
+  // Init DHT
+  dht.begin();
+  
+  setSyncProvider(rtc.get); // Get time from RTC
+  //setTime(23, 44, 5, 21, 6, 2018);
+  //rtc.set(now());
 
   pinMode(vrx, INPUT);
   pinMode(vry, INPUT);
@@ -120,16 +122,14 @@ void loop() {
   lcd.setCursor(0, 1);
   print2digits(hour());
   lcd.print(":");
-  print2digits(minute());
-  lcd.print(":");
-  print2digits(second());  
+  print2digits(minute());  
 
-  // Display humidity and temperature
-  DHT.read11(dhtPin);
-  lcd.setCursor(9, 1);  
-  lcd.print((int)DHT.temperature); 
+  // Display humidity and temperature  
+  lcd.setCursor(8, 1);
+  lcd.write(0);
+  lcd.print((int)dht.readTemperature()); 
   lcd.print("C ");
-  lcd.print((int)DHT.humidity);
+  lcd.print((int)dht.readHumidity());
   lcd.print("%"); 
     
   delay(1000);

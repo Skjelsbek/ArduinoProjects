@@ -2,7 +2,7 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 void setup() {
-  lcd.init();
+  lcd.begin();
   lcd.setBacklight(HIGH);
   
   //lcd.home();
@@ -10,7 +10,6 @@ void setup() {
   lcd.print("LCD Display");
   lcd.setCursor(4, 1);
   lcd.print("Template");
-
 }
 
 void loop() {
