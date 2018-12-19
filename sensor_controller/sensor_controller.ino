@@ -97,7 +97,10 @@ void loop()
             digitalWrite(reverse, HIGH); // Tell Micro:bit to back up            
             dir = true; // Setting direction to reverse
           }
-          stepper.step(-512);
+          else
+          {
+            stepper.step(-512);
+          }          
         }
         // If one or both of the sides are clear, set the corresponding turn signal high,
         // let Micro:bit know we're no longer stuck, rotate stepper back to origin
@@ -148,8 +151,8 @@ void loop()
         digitalWrite(feedback_out, HIGH);
         halt = true;                // halt = true -> wait for feedback_in signal to go low     
       }
-      // If time since last time rear was checked is more than 2 sec
-      else if (millis() - time_last >= 1000)
+      // If time since last time rear was checked is more than 750ms
+      else if (millis() - time_last >= 750)
       {
         stepper.step(-512); // Turn stepper motor back to origin
         distance_rear = sensor_rear.distanceRead(); // Measure rear distance
